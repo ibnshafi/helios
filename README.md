@@ -17,7 +17,7 @@
 [![SciPy](https://img.shields.io/badge/SciPy-1.10%2B-8CAAE6?style=flat-square&logo=scipy)](https://scipy.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-00d4aa?style=flat-square)](LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen?style=flat-square)](CONTRIBUTING.md)
-[![Stars](https://img.shields.io/github/stars/your-org/helios-chiron?style=flat-square&color=yellow)](https://github.com/your-org/helios-chiron/stargazers)
+[![Stars](https://img.shields.io/github/stars/ibnshafi/helios?style=flat-square&color=yellow)](https://github.com/ibnshafi/helios/stargazers)
 
 [**Quick Start**](#-quick-start) · [**Demo**](#-interactive-dashboard) · [**Architecture**](#-architecture) · [**Contribute**](#-contributing)
 
@@ -61,14 +61,14 @@ Joint sliders  →  FK  →  Jacobian  →  IK (DLS)  →  Impedance Control  �
 
 ```bash
 # 1. Clone
-git clone https://github.com/your-org/helios-chiron.git
-cd helios-chiron
+git clone https://github.com/ibnshafi/helios.git
+cd helios
 
 # 2. Install dependencies (no exotic packages)
 pip install numpy scipy matplotlib
 
 # 3. Launch the dashboard
-python helios_chiron.py
+python main.py
 ```
 
 That's it. A 3D arm pops up with sliders, a live IK solver, and real-time torque/sensor readouts.
@@ -152,7 +152,7 @@ Output is strain in µε and bridge voltage in mV, ready for hardware-in-the-loo
 ## 📦 Module Reference
 
 ```python
-from helios_chiron import (
+from main import (
     forward_kinematics,     # (q) → T_ee, positions[7×3]
     geometric_jacobian,     # (q) → J[6×6]
     condition_number,       # (J) → float
@@ -171,7 +171,7 @@ from helios_chiron import (
 
 ```python
 import numpy as np
-from helios_chiron import forward_kinematics, ik_dls, newton_euler_gravity
+from main import forward_kinematics, ik_dls, newton_euler_gravity
 
 # Start from home configuration
 q = np.array([0.0, -np.pi/4, np.pi/2, 0.0, np.pi/4, 0.0])
@@ -195,7 +195,7 @@ print(f"Gravity torques: {tau_g.round(2)} Nm")
 ### Example — Torque Sensor Readout
 
 ```python
-from helios_chiron import torque_sensor_output
+from main import torque_sensor_output
 
 strain_ue, v_out_mv = torque_sensor_output(tau=8.74)  # Joint 2 under gravity
 print(f"Strain: {strain_ue * 1e6:.1f} µε")
@@ -222,7 +222,7 @@ print(f"Bridge output: {v_out_mv * 1e3:.2f} mV")
 ### Open for PRs 🙋
 - [ ] **ROS 2 integration** — wrap as nodes, publish `/joint_states`, subscribe to `/target_pose`
 - [ ] **Hardware HIL** — SPI/I2C bridge to read real strain gauges, validate sensor model
-- [ ] **PyPI package** — `pip install helios-chiron`, type hints, ≥90% test coverage
+- [ ] **PyPI package** — `pip install helios`, type hints, ≥90% test coverage
 - [ ] **Benchmark suite** — IK convergence speed, RNE timing, conditioning vs. workspace volume
 - [ ] **URDF export** — generate robot description for Gazebo / MoveIt
 - [ ] **Web viewer** — Three.js port of the dashboard for browser-based demos
@@ -235,7 +235,7 @@ Contributions are what make this project worth forking. Whether it's a bug fix, 
 
 ```bash
 # Fork → clone your fork
-git clone https://github.com/<you>/helios-chiron.git
+git clone https://github.com/<you>/helios.git
 
 # Create a feature branch
 git checkout -b feat/ros2-integration
@@ -248,7 +248,7 @@ Please keep new modules consistent with the existing pattern:
 - NumPy arrays in, NumPy arrays out
 - A short docstring explaining inputs/outputs and units
 
-If you're unsure where to start, check the [open issues](https://github.com/your-org/helios-chiron/issues) — items tagged `good first issue` are ready to pick up.
+If you're unsure where to start, check the [open issues](https://github.com/ibnshafi/helios/issues) — items tagged `good first issue` are ready to pick up.
 
 ---
 
