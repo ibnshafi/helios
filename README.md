@@ -1,25 +1,24 @@
 <div align="center">
 
 ```
-██╗  ██╗███████╗██╗     ██╗ ██████╗ ███████╗
-██║  ██║██╔════╝██║     ██║██╔═══██╗██╔════╝
-███████║█████╗  ██║     ██║██║   ██║███████╗
-██╔══██║██╔══╝  ██║     ██║██║   ██║╚════██║
-██║  ██║███████╗███████╗██║╚██████╔╝███████║
-╚═╝  ╚═╝╚══════╝╚══════╝╚═╝ ╚═════╝ ╚══════╝
-         / C H I R O N
+ ██████╗██╗  ██╗███████╗███████╗███████╗███████╗ ██████╗ ██████╗  ██████╗ ███████╗
+██╔════╝██║  ██║██╔════╝██╔════╝██╔════╝██╔════╝██╔═══██╗██╔══██╗██╔════╝ ██╔════╝
+██║     ███████║█████╗  ███████╗███████╗█████╗  ██║   ██║██████╔╝██║  ███╗█████╗  
+██║     ██╔══██║██╔══╝  ╚════██║╚════██║██╔══╝  ██║   ██║██╔══██╗██║   ██║██╔══╝  
+╚██████╗██║  ██║███████╗███████║███████║██║     ╚██████╔╝██║  ██║╚██████╔╝███████╗
+ ╚═════╝╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝╚═╝      ╚═════╝ ╚═╝  ╚═╝ ╚═════╝ ╚══════╝
 ```
 
-**6-DOF Collaborative Robot Arm — Kinematic, Control & Dynamic Validation**
+**Dependency-free chess engine built from scratch in Python**
 
-[![Python](https://img.shields.io/badge/Python-3.9%2B-blue?style=flat-square&logo=python&logoColor=white)](https://python.org)
-[![NumPy](https://img.shields.io/badge/NumPy-1.24%2B-013243?style=flat-square&logo=numpy)](https://numpy.org)
-[![SciPy](https://img.shields.io/badge/SciPy-1.10%2B-8CAAE6?style=flat-square&logo=scipy)](https://scipy.org)
+[![Python](https://img.shields.io/badge/Python-3.10%2B-blue?style=flat-square&logo=python&logoColor=white)](https://python.org)
+[![Zero Dependencies](https://img.shields.io/badge/dependencies-zero-00d4aa?style=flat-square)]()
 [![License: MIT](https://img.shields.io/badge/License-MIT-00d4aa?style=flat-square)](LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen?style=flat-square)](CONTRIBUTING.md)
-[![Stars](https://img.shields.io/github/stars/ibnshafi/helios?style=flat-square&color=yellow)](https://github.com/ibnshafi/helios/stargazers)
+[![Stars](https://img.shields.io/github/stars/ibnshafi/chessforge?style=flat-square&color=yellow)](https://github.com/ibnshafi/chessforge/stargazers)
+[![Tests](https://img.shields.io/badge/tests-passing-brightgreen?style=flat-square)]()
 
-[**Quick Start**](#-quick-start) · [**Demo**](#-interactive-dashboard) · [**Architecture**](#-architecture) · [**Contribute**](#-contributing)
+[**Quick Start**](#-quick-start) · [**Features**](#-features) · [**Architecture**](#-architecture) · [**Search**](#-search--evaluation) · [**Contribute**](#-contributing)
 
 </div>
 
@@ -27,14 +26,20 @@
 
 ## What is this?
 
-HELIOS/CHIRON is a **research-grade, fully-integrated 6-DOF robot arm simulator** built in pure Python. Every module — from DH-parameter kinematics to recursive Newton-Euler dynamics to a live impedance controller — is wired into a single interactive Matplotlib dashboard you can run in under a minute.
+ChessForge is a **complete, dependency-free chess engine** — no Stockfish, no python-chess, no shortcuts. Every rule, every search algorithm, every evaluation term is implemented from scratch in pure Python.
 
-Pull it, run it, break it. Then send a PR.
+Full FIDE legality. A real search. A real evaluator. A UCI interface. And a research platform for ML experiments and engine ablations.
+
+Pull it, play it, break it. Then send a PR.
 
 ```
-Joint sliders  →  FK  →  Jacobian  →  IK (DLS)  →  Impedance Control  →  Live 3D Plot
-                                  ↓
-                         Gravity Torques (RNE)  →  Torque Sensor Sim  →  Lyapunov Check
+Legal Move Gen  →  Zobrist Hashing  →  PVS Alpha-Beta  →  Quiescence Search
+      ↓                                       ↓
+ King Safety                        Transposition Table
+ En Passant                         Aspiration Windows
+ Castling                           Null-Move Pruning
+ Promotion                          Late Move Reductions
+ 50-Move / Repetition               Killer / History Heuristics
 ```
 
 ---
@@ -43,212 +48,274 @@ Joint sliders  →  FK  →  Jacobian  →  IK (DLS)  →  Impedance Control  �
 
 | Module | What it does |
 |--------|-------------|
-| 🦾 **Forward Kinematics** | Full DH-parameter chain, 4×4 homogeneous transforms, link-by-link positions |
-| 🎯 **Damped Least Squares IK** | Singularity-robust iterative solver, converges to 1e-6 m in <200 iterations |
-| 📐 **Geometric Jacobian** | 6×6 J with condition number — real-time singularity monitoring |
-| ⚖️ **Recursive Newton-Euler** | Static gravity torques with full mass, COM, and inertia tensor per link |
-| 🌀 **Impedance Control** | Cartesian spring-damper in operational space + Lyapunov stability proof |
-| 🗺️ **DIS-RRT\* Cost Field** | Torque + obstacle + conditioning cost with Boltzmann sampling probability |
-| 📡 **Torque Sensor Sim** | Flexure strain (µε) and Wheatstone bridge voltage (mV) per joint |
-| ⚙️ **Cycloidal Drive Spec** | 35-lobe drive → 35:1 ratio, ~68 Nm output torque |
-| 🖥️ **Interactive Dashboard** | Live 3D arm, 6 joint sliders, IK button, full telemetry readout |
+| ♟️ **Complete FIDE Rules** | Castling, en passant, promotion, checkmate, stalemate, threefold repetition, 50-move rule |
+| 🔑 **Zobrist Hashing** | Immutable game-state transitions with deterministic repetition keys |
+| ⚡ **Legal Move Generation** | Pseudo-legal generation + king-safety filtering, catches all pins and discovered checks |
+| 🔭 **PVS Search** | Principal variation search with aspiration windows, iterative deepening, full instrumentation |
+| ✂️ **Selective Pruning** | Null-move pruning, late move reductions, check extensions, SEE-assisted move ordering |
+| 📊 **Advanced Evaluation** | Pawn structure, passed pawns, rook files, outposts, king tropism, space, tempo, fortress scaling |
+| ♻️ **Transposition Table** | Zobrist-keyed TT with exact/lower/upper bounds |
+| 🧪 **Research Platform** | Tournaments, ablations, Elo estimation, SPRT, parameter sweeps |
+| 🤖 **ML Tooling** | Self-play data generation, sparse features, quantized evaluator |
+| 📈 **Visualization** | Attack maps, PV reports, evaluation heatmaps |
+| 🖥️ **Playable CLI** | Human vs Human, Human vs AI, AI vs AI |
+| 🔌 **UCI Protocol** | Drop into any chess GUI (Arena, Cutechess, etc.) |
+| ✅ **Perft Validated** | Move generator verified against known node counts at depth 1–3 |
 
 ---
 
 ## 🚀 Quick Start
 
-**Requirements:** Python 3.9+, pip
+**Requirements:** Python 3.10+, no pip installs needed
 
 ```bash
 # 1. Clone
-git clone https://github.com/ibnshafi/helios.git
-cd helios
+git clone https://github.com/ibnshafi/chessforge.git
+cd chessforge
 
-# 2. Install dependencies (no exotic packages)
-pip install numpy scipy matplotlib
-
-# 3. Launch the dashboard
-python main.py
+# 2. Play immediately — no dependencies to install
+python -m chessforge.cli --mode human-ai --human-color white --depth 3 --time 2
 ```
 
-That's it. A 3D arm pops up with sliders, a live IK solver, and real-time torque/sensor readouts.
+### Play modes
+
+```bash
+# You vs the engine
+python -m chessforge.cli --mode human-ai --human-color white --depth 3 --time 2
+
+# Two humans, one board
+python -m chessforge.cli --mode human-human
+
+# Watch the engine play itself
+python -m chessforge.cli --mode ai-ai --depth 2 --time 1 --max-plies 80
+
+# Standalone AI vs AI example
+python examples/ai_vs_ai.py --depth 2 --time 0.5 --max-plies 40
+```
+
+### UCI (plug into any chess GUI)
+
+```bash
+python -m chessforge.uci
+```
+
+```text
+uci
+isready
+position startpos moves e2e4 e7e5
+go depth 4
+quit
+```
 
 ---
 
-## 🖥️ Interactive Dashboard
+## 🎮 CLI Commands
 
-The dashboard gives you full live control:
+Once inside a game:
 
-- **6 joint sliders** — drag any joint, the arm updates instantly
-- **IK Solve button** — set a Cartesian target (X/Y/Z + RPY), hit solve
-- **Live telemetry panel** — EE position, condition number, gravity torques for all 6 joints, sensor voltage, cost field value, Lyapunov V and V̇
-
-```
-┌─────────────────────────────┐  ┌──────────────────────────────┐
-│                             │  │  q1  ────●──────────  0.00   │
-│       3D Arm View           │  │  q2  ──●────────────  -0.79  │
-│                             │  │  q3  ──────────●────   1.57  │
-│    [live matplotlib plot]   │  │  q4  ──────●────────   0.00  │
-│                             │  │  q5  ─────────●─────   0.79  │
-│                             │  │  q6  ──────●────────   0.00  │
-│                             │  ├──────────────────────────────┤
-│      × Target               │  │  [Target X/Y/Z sliders]      │
-│                             │  │  [Roll/Pitch/Yaw sliders]    │
-└─────────────────────────────┘  │           [ Solve IK ]       │
-                                 └──────────────────────────────┘
+```text
+e2e4        play a move (UCI format); promotions: e7e8q / e7e8n / e7e8r / e7e8b
+legal       list all legal moves in the current position
+fen         print current FEN string
+board       print board to terminal
+eval        print static evaluation score
+perft N     run perft at depth N
+divide N    run perft divide at depth N
+undo        undo the last ply
+quit        exit
 ```
 
 ---
 
 ## 🏗️ Architecture
 
-### DH Parameters
-
-The arm is defined by 6 joints using standard Denavit-Hartenberg parameters:
+### File Structure
 
 ```
-Joint │   a (m)  │  α (rad)   │   d (m)  │ θ offset
-──────┼──────────┼────────────┼──────────┼──────────
-  1   │  0.000   │   0.000    │  0.175   │   0.000
-  2   │  0.000   │  -π/2      │  0.000   │  -π/2
-  3   │  0.350   │   0.000    │  0.000   │   0.000
-  4   │  0.050   │  -π/2      │  0.350   │   0.000
-  5   │  0.000   │  +π/2      │  0.000   │   0.000
-  6   │  0.000   │  -π/2      │  0.100   │   0.000
+chessforge/
+  constants.py     board constants, piece codes, square helpers
+  attacks.py       precomputed pawn, knight, and king attack geometry
+  bitboards.py     derived bitboard views and attack masks
+  move.py          compact move object and UCI formatting
+  core.py          FEN, rules, legal moves, state transitions, status, perft
+  evaluation.py    advanced deterministic positional evaluation
+  search.py        PVS alpha-beta, quiescence, pruning, TT, instrumentation
+  metrics.py       search counters and depth reports
+  benchmark.py     reproducible perft/search/eval benchmark exports
+  experiments.py   tournaments, ablations, Elo, SPRT, parameter sweeps
+  ml.py            self-play data, sparse features, quantized evaluator
+  visualization.py attack maps, PV reports, evaluation heatmaps
+  tactics.py       tactics tooling
+  cli.py           playable command-line app
+  uci.py           UCI protocol entrypoint
 ```
 
-Total reach: ~0.675 m. Base height: 175 mm. Wrist offset: 100 mm.
+### Board Representation
 
-### Inverse Kinematics — Damped Least Squares
-
-```
-q_{k+1} = q_k + J^T (J J^T + λ²I)^{-1} · e(T_des, T_cur)
-```
-
-Where `e` is the 6D pose error (position + axis-angle orientation). The damping factor `λ = 0.1` keeps the solve stable near singularities.
-
-### Impedance Control Law
+The board is a **64-square array** indexed `a1 == 0` through `h8 == 63`. Pieces are signed integers — positive for White, negative for Black, magnitude = piece type.
 
 ```
-F_ee = K_p · e_p + K_d · ė_p
-τ_cmd = J^T_v · F_ee
+Index:   0  1  2  3  4  5  6  7    ← rank 1 (a1–h1)
+        ...
+        56 57 58 59 60 61 62 63    ← rank 8 (a8–h8)
 
-Lyapunov function:  V  = ½ (ė_p^T Λ ė_p + e_p^T K_p e_p)
-Stability proof:    V̇  = -ė_p^T K_d ė_p ≤ 0  ✓
+Piece values:  P=1  N=2  B=3  R=4  Q=5  K=6
+               White: +value    Black: -value
 ```
 
-### Torque Sensor — Wheatstone Bridge
-
-Each joint has a simulated flexure torque sensor:
+### Move Generation Pipeline
 
 ```
-τ → F = τ / (4r) → M = F·L → ε = M·(h/2) / (E·I) → V_out = V_ex · GF · ε · gain
+1. Generate pseudo-legal moves (all moves ignoring check)
+        ↓
+2. Apply each move to a transient board copy
+        ↓
+3. Call attack detector on moving side's king square
+        ↓
+4. Discard if king is in check → legal move set
 ```
 
-Output is strain in µε and bridge voltage in mV, ready for hardware-in-the-loop validation.
+This automatically handles pins, en passant discovered checks, king moves into attack, and all castling path constraints. Attack geometry (pawns, knights, kings) is precomputed in `attacks.py` — pure coordinate tables, reused across legality, evaluation, and bitboard work.
+
+### Immutability Model
+
+`Position` is immutable from the public API. Every move returns a new `Position`. The engine uses a trusted transient constructor internally for high-volume legality filtering — full immutable objects are only created for real state transitions, keeping the hot path allocation-light.
 
 ---
 
-## 📦 Module Reference
+## 🔍 Search & Evaluation
 
-```python
-from main import (
-    forward_kinematics,     # (q) → T_ee, positions[7×3]
-    geometric_jacobian,     # (q) → J[6×6]
-    condition_number,       # (J) → float
-    ik_dls,                 # (T_des, q0) → q_solution
-    newton_euler_gravity,   # (q) → tau_g[6]
-    impedance_control_step, # (q, T_des) → tau_cmd[6], e_p[3]
-    impedance_lyapunov,     # (e_p) → V, V_dot
-    cost_field,             # (q) → scalar cost
-    boltzmann_prob,         # (q) → probability ∈ (0,1]
-    torque_sensor_output,   # (tau) → strain_ue, V_out_mV
-    cycloidal_drive,        # (lobes=35) → ratio, torque_Nm
-)
+### Search Stack
+
+```
+Iterative Deepening
+  └─ PVS (Principal Variation Search)
+       ├─ Aspiration Windows
+       ├─ Transposition Table  (Zobrist-keyed, exact/lower/upper bounds)
+       ├─ Null-Move Pruning
+       ├─ Late Move Reductions
+       ├─ Check Extensions
+       ├─ Killer Heuristic
+       ├─ History Heuristic
+       ├─ SEE-Assisted Move Ordering
+       └─ Quiescence Search
 ```
 
-### Example — FK + IK + Gravity Torques
+### Evaluation Terms
 
-```python
-import numpy as np
-from main import forward_kinematics, ik_dls, newton_euler_gravity
-
-# Start from home configuration
-q = np.array([0.0, -np.pi/4, np.pi/2, 0.0, np.pi/4, 0.0])
-
-# Forward kinematics
-T_ee, positions = forward_kinematics(q)
-print(f"End-effector position: {T_ee[:3, 3].round(3)} m")
-# → End-effector position: [0.451 0.    0.525] m
-
-# Solve IK for a target pose
-T_target = np.eye(4)
-T_target[:3, 3] = [0.5, 0.0, 0.5]
-q_sol = ik_dls(T_target, q, max_iter=200, tol=1e-6, damping=0.1)
-
-# Gravity compensation torques at solution
-tau_g = newton_euler_gravity(q_sol)
-print(f"Gravity torques: {tau_g.round(2)} Nm")
-# → Gravity torques: [-0.    8.74  3.21  0.12  0.16 -0.  ] Nm
+```
+Material + PST
+  + Mobility
+  + Bishop pair bonus
+  + Pawn structure (doubled, isolated, backward)
+  + Passed pawn bonuses
+  + Rook on open / semi-open file
+  + Outpost detection
+  + King tropism (attacker proximity to enemy king)
+  + King safety (pawn shield, attack count)
+  + Space control
+  + Tempo
+  + Endgame: opposition, fortress scaling
 ```
 
-### Example — Torque Sensor Readout
+---
 
-```python
-from main import torque_sensor_output
+## ✅ Tests & Perft Validation
 
-strain_ue, v_out_mv = torque_sensor_output(tau=8.74)  # Joint 2 under gravity
-print(f"Strain: {strain_ue * 1e6:.1f} µε")
-print(f"Bridge output: {v_out_mv * 1e3:.2f} mV")
+```bash
+python -m unittest discover -s tests -v
 ```
+
+The test suite validates move generation correctness against known node counts:
+
+```
+Position              Depth 1   Depth 2   Depth 3
+─────────────────────────────────────────────────
+Starting position        20       400      8,902
+Kiwipete                 48     2,039     97,862
+En passant / endgame     14       191      2,812
+```
+
+Plus rule correctness tests for:
+- Castling edge cases (path attacks, rook/king moved)
+- En passant discovered-check illegality
+- All four promotion pieces
+- Checkmate and stalemate detection
+- Threefold repetition
+- 50-move rule
+- Search returning only legal moves
+
+---
+
+## 📦 Benchmarks & Research
+
+```bash
+# Reproducible perft / search / eval benchmarks
+python -m chessforge.benchmark --repeats 1 --eval-iterations 20
+
+# Engine research: tournaments, ablations, parameter sweeps
+python -m chessforge.research --depths 1,2 --max-plies 8
+```
+
+The research platform supports:
+- **Engine tournaments** with Elo estimation
+- **SPRT** (Sequential Probability Ratio Test) for patch significance
+- **Ablation studies** — disable individual eval terms and measure Elo delta
+- **Self-play data generation** for ML training
+- **Sparse feature extraction** and quantized evaluator export
 
 ---
 
 ## 🛣️ Roadmap
 
 ### Done ✅
-- [x] DH forward kinematics + geometric Jacobian
-- [x] Damped least squares IK with pose error (position + orientation)
-- [x] Recursive Newton-Euler gravity torques
-- [x] Cartesian impedance control with Lyapunov stability analysis
-- [x] Torque sensor simulation (strain + Wheatstone bridge)
-- [x] DIS-RRT* cost field with Boltzmann sampling
-- [x] Full interactive Matplotlib dashboard
-
-### In Progress 🔧
-- [ ] **Full DIS-RRT\* planner** — connect cost field to a complete tree-based planner with collision avoidance
-- [ ] **Dynamic RNE** — extend to full case with angular velocity, acceleration, Coriolis, centrifugal terms
+- [x] Complete FIDE legal move generation with perft validation
+- [x] Immutable Position model with Zobrist repetition hashing
+- [x] PVS search with aspiration windows and iterative deepening
+- [x] Full pruning stack (null move, LMR, check extensions)
+- [x] Transposition table with exact/bound entries
+- [x] Advanced evaluation (pawn structure, king safety, outposts, fortress)
+- [x] UCI protocol
+- [x] Playable CLI (human vs human, human vs AI, AI vs AI)
+- [x] Research and ML platform
+- [x] Perft test suite
 
 ### Open for PRs 🙋
-- [ ] **ROS 2 integration** — wrap as nodes, publish `/joint_states`, subscribe to `/target_pose`
-- [ ] **Hardware HIL** — SPI/I2C bridge to read real strain gauges, validate sensor model
-- [ ] **PyPI package** — `pip install helios`, type hints, ≥90% test coverage
-- [ ] **Benchmark suite** — IK convergence speed, RNE timing, conditioning vs. workspace volume
-- [ ] **URDF export** — generate robot description for Gazebo / MoveIt
-- [ ] **Web viewer** — Three.js port of the dashboard for browser-based demos
+- [ ] **NNUE evaluator** — replace handcrafted eval with a trained neural net
+- [ ] **Opening book** — polyglot format, weighted move selection
+- [ ] **Endgame tablebases** — Syzygy probe integration
+- [ ] **Bitboard move gen** — replace array-based gen with 64-bit bitboards for speed
+- [ ] **Web interface** — browser-playable board over WebSocket UCI
+- [ ] **PyPI package** — `pip install chessforge`, type hints, ≥90% test coverage
+- [ ] **Puzzles / tactics mode** — load EPD, solve, report accuracy
+- [ ] **Time management** — proper clock handling for tournament play
 
 ---
 
 ## 🤝 Contributing
 
-Contributions are what make this project worth forking. Whether it's a bug fix, a new planning algorithm, or a ROS wrapper — all PRs are welcome.
+No chess library experience needed — just Python and curiosity. Every module is self-contained and well-commented.
 
 ```bash
 # Fork → clone your fork
-git clone https://github.com/<you>/helios.git
+git clone https://github.com/<you>/chessforge.git
 
 # Create a feature branch
-git checkout -b feat/ros2-integration
+git checkout -b feat/opening-book
 
-# Make your changes, then open a PR against main
+# Run the test suite before pushing
+python -m unittest discover -s tests -v
+
+# Open a PR against main
 ```
 
-Please keep new modules consistent with the existing pattern:
-- Pure functions where possible (no hidden state)
-- NumPy arrays in, NumPy arrays out
-- A short docstring explaining inputs/outputs and units
+Good places to start:
+- Pick an **Open for PRs** item above
+- Improve evaluation term weights via the research platform
+- Add perft positions to `tests/test_perft.py`
+- Check [open issues](https://github.com/ibnshafi/chessforge/issues) for items tagged `good first issue`
 
-If you're unsure where to start, check the [open issues](https://github.com/ibnshafi/helios/issues) — items tagged `good first issue` are ready to pick up.
+Please keep new code consistent with the existing style — pure functions where possible, no external dependencies, and a perft or unit test for anything touching move generation or rules.
 
 ---
 
@@ -260,8 +327,8 @@ MIT — do whatever you want, just keep the attribution.
 
 <div align="center">
 
-**If this saved you hours of robotics math, consider leaving a ⭐**
+**If this saved you from reading the FIDE rulebook, consider leaving a ⭐**
 
-Built with ♥ for the open robotics community
+Built with ♥ — no libraries harmed in the making of this engine
 
 </div>
